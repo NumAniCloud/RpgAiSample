@@ -102,6 +102,7 @@ class PlayerBattler : Battler
     {
         var skill = ai.DetermineSkill(context, Skills);
         skill.Run(context, context.Enemy);
+        //Skills[1].Run(context, context.Enemy);
     }
 }
 
@@ -154,7 +155,7 @@ class PlayerAi
 {
     public Skill DetermineSkill(BattleContext context, Skill[] skills)
     {
-        (Skill, int priority) candidate = (null, 0);
+        (Skill, int priority) candidate = (null, -context.Enemy.Hp);
 
         // シミュレーション中に発動するスキルのメッセージを表示しないようにするためのクローン
         var cloneContext = new BattleContext(new NullView())
@@ -175,10 +176,9 @@ class PlayerAi
                 Defense = context.Enemy.Defense
             };
 
-            var srcHp = clone.Hp;
             skill.Run(cloneContext, clone);
 
-            var priority = srcHp - clone.Hp;
+            var priority = -clone.Hp;
             if (candidate.priority < priority)
             {
                 candidate = (skill, priority);
